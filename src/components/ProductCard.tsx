@@ -1,173 +1,137 @@
-import React, { useState } from 'react';
-import { Check, GitCompareArrows, Heart, Plus, ShoppingBag, Star } from 'lucide-react';
+import React from 'react';
+import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useStore } from '../context/StoreContext';
-import type { SupermarketProduct } from '../types/supermarket';
+import { Product } from '../types/store';
 import { formatINR } from '../utils/currency';
 import { ResilientImage } from './ResilientImage';
 
 interface ProductCardProps {
-  product: SupermarketProduct;
+  product: Product;
+  isWishlisted: boolean;
+  onToggleWishlist: (productId: string) => void;
+  onAddToCart: (product: Product) => void;
+  onBuyNow: (product: Product) => void;
+  onViewProduct: (product: Product) => void;
   index?: number;
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
-  const {
-    navigateToProduct,
-    addToCart,
-    toggleWishlist,
-    wishlist,
-    toggleCompare,
-    compareIds,
-  } = useStore();
-  const [justAdded, setJustAdded] = useState(false);
-
-  const isWishlisted = wishlist.includes(product.id);
-  const isCompared = compareIds.includes(product.id);
-
-  const handleQuickAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    addToCart(product.id, 1);
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1100);
-  };
+export const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  isWishlisted,
+  onToggleWishlist,
+  onAddToCart,
+  onBuyNow,
+  onViewProduct,
+  index = 0,
+}) => {
+  const outOfStock = product.stock <= 0;
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 24, rotateX: -8 }}
-      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{
-        duration: 0.42,
-        delay: Math.min((index % 6) * 0.05, 0.25),
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileHover={{ y: -6 }}
-      onClick={() => navigateToProduct(product.id)}
-      className="group cursor-pointer rounded-2xl bg-white dark:bg-[#111F18] border border-slate-200/85 dark:border-emerald-900/50 overflow-hidden shadow-xs hover:shadow-xl hover:shadow-emerald-950/8 dark:hover:shadow-black/40 transition-shadow duration-300 flex flex-col"
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25), ease: [0.16, 1, 0.3, 1] }}
+      className="group flex flex-col bg-white rounded-xl border border-[#EADCE2] overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_-14px_rgba(107,29,58,0.18)]"
     >
-      {/* Image stage (68% visual lead, clean neutral surface, exact 1-to-1 photo) */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-[#F1F5F0] dark:bg-[#0D1A14]">
-        <ResilientImage
-          src={product.image}
-          alt={product.name}
-          className="group-hover:scale-106 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-        />
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#FAF4EE]">
+        <button
+          type="button"
+          onClick={() => onViewProduct(product)}
+          className="block w-full h-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B1D3A]"
+          aria-label={`View details for ${product.name}`}
+        >
+          <ResilientImage
+            src={product.images[0]}
+            alt={product.name}
+            fallbackLabel={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+        </button>
 
-        {/* Subtle sheen sweep across image on hover */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-        />
-
-        {/* Subtle single text offer tag + functional action icons */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
-          {product.offerLabel ? (
-            <span className="px-2.5 py-1 rounded-md text-[11px] font-heading font-semibold bg-[#064E3B]/90 text-[#FDE68A] backdrop-blur-sm">
-              {product.offerLabel}
-            </span>
-          ) : (
-            <span />
-          )}
-
-          <div className="flex items-center gap-1.5">
-            <motion.button
-              type="button"
-              aria-label={isCompared ? 'Remove from comparison' : 'Compare product'}
-              whileTap={{ scale: 0.85 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleCompare(product.id);
-              }}
-              className={`w-9 h-9 rounded-lg flex items-center justify-center backdrop-blur-md transition-colors ${
-                isCompared
-                  ? 'bg-[#D97706] text-white'
-                  : 'bg-white/90 dark:bg-[#0A1612]/85 text-slate-700 dark:text-emerald-100 hover:bg-white dark:hover:bg-[#13291F]'
-              }`}
-            >
-              <GitCompareArrows className="w-4 h-4" />
-            </motion.button>
-
-            <motion.button
-              type="button"
-              aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-              whileTap={{ scale: 1.3 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleWishlist(product.id);
-              }}
-              className={`w-9 h-9 rounded-lg flex items-center justify-center backdrop-blur-md transition-colors ${
-                isWishlisted
-                  ? 'bg-rose-600 text-white'
-                  : 'bg-white/90 dark:bg-[#0A1612]/85 text-slate-700 dark:text-emerald-100 hover:bg-white dark:hover:bg-[#13291F]'
-              }`}
-            >
-              <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
-            </motion.button>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={() => onToggleWishlist(product.id)}
+          aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
+          className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B1D3A] ${
+            isWishlisted
+              ? 'bg-[#6B1D3A] text-white'
+              : 'bg-white/90 text-[#2D1620] hover:bg-white hover:text-[#C94A70]'
+          }`}
+        >
+          <Heart className="w-4 h-4" fill={isWishlisted ? 'currentColor' : 'none'} />
+        </button>
       </div>
 
-      {/* Product info & aligned pricing */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
-        <div>
-          <div className="flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-emerald-200/70">
-            <span className="truncate font-medium tracking-wide">
-              {product.category}
-            </span>
-            <span className="shrink-0 inline-flex items-center gap-1 font-mono tabular-nums text-amber-600 dark:text-amber-400 font-medium">
-              <Star className="w-3.5 h-3.5 fill-current" />
-              {product.rating.toFixed(1)}
-            </span>
-          </div>
-
-          <h3 className="mt-1.5 font-heading font-semibold text-[15px] sm:text-base leading-snug text-slate-900 dark:text-white group-hover:text-[#047857] dark:group-hover:text-[#34D399] transition-colors line-clamp-2">
-            {product.name}
-          </h3>
-
-          <p className="mt-1 text-xs text-slate-500 dark:text-emerald-100/60 truncate">
-            {product.brand} · {product.weight}
-          </p>
+      <div className="flex flex-col flex-1 p-5">
+        <div className="flex items-center justify-between gap-2 text-xs text-[#654552] mb-1.5">
+          <span className="truncate font-medium text-[#6B1D3A]">
+            {product.category}
+            {product.offerLabel ? ` · ${product.offerLabel}` : ''}
+          </span>
+          <span className="inline-flex items-center gap-1 font-mono tabular-nums shrink-0 text-[#2D1620]">
+            <Star className="w-3.5 h-3.5 text-[#C69C53] fill-[#C69C53]" />
+            {product.rating.toFixed(1)}
+          </span>
         </div>
 
-        <div className="pt-3 border-t border-slate-100 dark:border-emerald-950/60 flex items-center justify-between gap-3">
-          <div className="flex items-baseline gap-2 tabular-nums">
-            <span className="font-heading font-bold text-base sm:text-lg text-slate-900 dark:text-white">
-              {formatINR(product.price)}
-            </span>
-            {product.originalPrice > product.price && (
-              <span className="text-xs text-slate-400 line-through">
-                {formatINR(product.originalPrice)}
+        <button
+          type="button"
+          onClick={() => onViewProduct(product)}
+          className="text-left focus-visible:outline-none"
+        >
+          <h3 className="font-display text-lg font-semibold text-[#2D1620] leading-snug line-clamp-2 group-hover:text-[#6B1D3A] transition-colors">
+            {product.name}
+          </h3>
+        </button>
+
+        <p className="mt-1.5 text-sm text-[#654552] line-clamp-2 leading-relaxed">
+          {product.description}
+        </p>
+
+        <div className="mt-auto pt-4">
+          <div className="flex items-baseline justify-between gap-2 mb-3.5">
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono text-lg font-semibold text-[#2D1620] tabular-nums">
+                {formatINR(product.price)}
               </span>
-            )}
+              {product.originalPrice > product.price && (
+                <span className="font-mono text-xs text-[#8D6F7B] line-through tabular-nums">
+                  {formatINR(product.originalPrice)}
+                </span>
+              )}
+              {product.discountPercent > 0 && (
+                <span className="text-xs font-medium text-[#C94A70] tabular-nums">
+                  Save {product.discountPercent}%
+                </span>
+              )}
+            </div>
+            <span className="text-xs text-[#654552] tabular-nums shrink-0">
+              {outOfStock ? 'Sold Out' : `${product.stock} left`}
+            </span>
           </div>
 
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.92 }}
-            onClick={handleQuickAdd}
-            className={`px-3.5 py-2 rounded-lg text-xs font-heading font-semibold inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-              justAdded
-                ? 'bg-[#065F46] text-[#FDE68A]'
-                : 'bg-[#047857] hover:bg-[#065F46] text-white'
-            }`}
-          >
-            {justAdded ? (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Added</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>Add</span>
-                <Plus className="w-3 h-3" />
-              </>
-            )}
-          </motion.button>
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              disabled={outOfStock}
+              onClick={() => onAddToCart(product)}
+              className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg border border-[#6B1D3A] text-[#6B1D3A] text-xs font-semibold hover:bg-[#FDE8EF] disabled:opacity-45 disabled:cursor-not-allowed transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              Add to Cart
+            </button>
+            <button
+              type="button"
+              disabled={outOfStock}
+              onClick={() => onBuyNow(product)}
+              className="inline-flex items-center justify-center py-2.5 px-3 rounded-lg bg-[#6B1D3A] text-white text-xs font-semibold hover:bg-[#842449] disabled:opacity-45 disabled:cursor-not-allowed transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Buy Now
+            </button>
+          </div>
         </div>
       </div>
     </motion.article>
   );
-}
+};

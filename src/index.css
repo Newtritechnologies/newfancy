@@ -1,27 +1,36 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-display: "Playfair Display", ui-serif, Georgia, serif;
-  --font-heading: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
   --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
+  :root {
+    --color-cream: #fcf8f4;
+    --color-ivory: #ffffff;
+    --color-rose-soft: #fde8ef;
+    --color-rose-pink: #c94a70;
+    --color-burgundy: #6b1d3a;
+    --color-gold: #c69c53;
+    --color-lavender: #f3edf8;
+    --color-ink: #2d1620;
+    --color-ink-muted: #654552;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: var(--font-body);
+    background-color: #fcf8f4;
+    color: #2d1620;
   }
 
   h1,
   h2,
+  h3,
   .font-display {
     font-family: var(--font-display);
-  }
-
-  .font-heading {
-    font-family: var(--font-heading);
   }
 
   .tabular-nums {
@@ -42,31 +51,16 @@
   }
 }
 
-@keyframes shimmerSweep {
-  0% {
-    transform: translateX(-100%);
-  }
+@keyframes gentle-float {
+  0%,
   100% {
-    transform: translateX(200%);
-  }
-}
-
-.animate-shimmer {
-  animation: shimmerSweep 2.6s ease-in-out infinite;
-}
-
-@keyframes slowKenBurns {
-  0% {
-    transform: scale(1) translate3d(0, 0, 0);
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: scale(1.07) translate3d(-1%, -0.8%, 0);
-  }
-  100% {
-    transform: scale(1) translate3d(0, 0, 0);
+    transform: translateY(-8px) rotate(2deg);
   }
 }
 
-.animate-ken-burns {
-  animation: slowKenBurns 22s ease-in-out infinite;
+.animate-gentle-float {
+  animation: gentle-float 6s ease-in-out infinite;
 }

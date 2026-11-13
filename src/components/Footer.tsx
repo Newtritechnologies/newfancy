@@ -1,206 +1,156 @@
-import React, { useState } from 'react';
-import { ArrowUpRight, CheckCircle2, Mail, MapPin, Phone } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useStore } from '../context/StoreContext';
+import React from 'react';
+import { Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { CategoryItem } from '../types/store';
+import { PageRoute } from './Navbar';
 
-export function Footer() {
-  const { setRoute, pushToast } = useStore();
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+interface FooterProps {
+  categories: CategoryItem[];
+  onNavigate: (page: PageRoute) => void;
+  onSelectCategory: (categoryName: string) => void;
+}
 
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.includes('@')) return;
-    try {
-      const res = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const ct = res.headers.get('content-type') || '';
-      if (res.ok && ct.includes('application/json')) {
-        setSubscribed(true);
-        setEmail('');
-        pushToast('Subscribed to Fresh Harvest Alerts');
-        return;
-      }
-    } catch {
-      // Fall back cleanly on static hosts (Netlify)
-    }
-    setSubscribed(true);
-    setEmail('');
-    pushToast('Subscribed to Fresh Harvest Alerts');
-  };
-
+export const Footer: React.FC<FooterProps> = ({
+  categories,
+  onNavigate,
+  onSelectCategory,
+}) => {
   return (
-    <footer className="bg-[#0A1612] text-emerald-50 border-t border-emerald-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 md:grid-cols-12 gap-10">
-        {/* Brand column */}
-        <div className="md:col-span-4 space-y-4">
-          <button
-            type="button"
-            onClick={() => setRoute('home')}
-            className="font-display font-bold text-2xl tracking-tight text-white cursor-pointer"
-          >
-            RAVI SUPERMARKET
-          </button>
-          <p className="text-sm text-emerald-100/75 leading-relaxed max-w-sm">
-            Neighborhood gourmet market in Anna Nagar, Chennai. Unique batch-verified pantry staples,
-            morning-harvest produce, A2 dairy, and express 45-minute doorstep fulfillment.
-          </p>
-          <div className="space-y-2 text-xs text-emerald-200/80 pt-1">
-            <p className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#F59E0B] shrink-0" />
-              <span>42 Second Avenue, Anna Nagar, Chennai 600040</span>
+    <footer className="bg-[#2D1620] text-[#FAF4EE] border-t border-[#4B2736]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-4 space-y-4">
+            <button
+              type="button"
+              onClick={() => onNavigate('home')}
+              className="font-display text-2xl font-bold tracking-tight text-white cursor-pointer text-left"
+            >
+              RAVI FANCY STORE
+            </button>
+            <p className="text-sm text-[#E5D4DC] leading-relaxed max-w-sm">
+              Your trusted ladies’ boutique for handcrafted bridal jewellery, temple jumkas, silk-thread bangles, hair accessories, bindis, and velvet-finish cosmetics.
             </p>
-            <p className="flex items-center gap-2 tabular-nums">
-              <Phone className="w-4 h-4 text-[#F59E0B] shrink-0" />
-              <span>+91 98400 77880 (Daily 06:00 – 23:00)</span>
-            </p>
-            <p className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-[#F59E0B] shrink-0" />
-              <span>concierge@ravisupermarket.in</span>
-            </p>
+            <div className="space-y-2 text-xs text-[#E5D4DC]">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-[#C69C53] shrink-0 mt-0.5" />
+                <span>28 Pearl Bazaar Lane, T. Nagar, Chennai 600017</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-[#C69C53] shrink-0" />
+                <span className="font-mono">+91 98400 72145</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-[#C69C53] shrink-0" />
+                <span>care@ravifancystore.in</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href="https://wa.me/919840072145"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp RAVI FANCY STORE"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-[#F3D799]" />
+                <span>WhatsApp</span>
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram RAVI FANCY STORE"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors"
+              >
+                <Instagram className="w-3.5 h-3.5 text-[#F3D799]" />
+                <span>Instagram</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="lg:col-span-4">
+            <h3 className="font-display text-base font-semibold text-[#F3D799] mb-4">
+              Boutique Categories
+            </h3>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-[#E5D4DC]">
+              {categories.slice(0, 12).map((cat) => (
+                <li key={cat.id}>
+                  <button
+                    type="button"
+                    onClick={() => onSelectCategory(cat.name)}
+                    className="hover:text-white transition-colors text-left cursor-pointer"
+                  >
+                    {cat.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-4 grid grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-display text-base font-semibold text-[#F3D799] mb-4">
+                Customer Care
+              </h3>
+              <ul className="space-y-2.5 text-sm text-[#E5D4DC]">
+                <li>
+                  <button type="button" onClick={() => onNavigate('about')} className="hover:text-white cursor-pointer">
+                    About Us
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => onNavigate('contact')} className="hover:text-white cursor-pointer">
+                    Contact Us
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => onNavigate('tracking')} className="hover:text-white cursor-pointer">
+                    Track Order
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => onNavigate('faq')} className="hover:text-white cursor-pointer">
+                    FAQ
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-display text-base font-semibold text-[#F3D799] mb-4">
+                Policies & Store
+              </h3>
+              <ul className="space-y-2.5 text-sm text-[#E5D4DC]">
+                <li>
+                  <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-white cursor-pointer">
+                    Privacy Policy
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => onNavigate('terms')} className="hover:text-white cursor-pointer">
+                    Terms & Conditions
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => onNavigate('refund')} className="hover:text-white cursor-pointer">
+                    Return & Refund
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => onNavigate('admin')} className="text-[#F3D799] hover:text-white cursor-pointer">
+                    Admin Dashboard
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Navigation links */}
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="font-heading text-xs font-semibold tracking-wider text-[#FDE68A]">
-            DEPARTMENTS
-          </h4>
-          <ul className="space-y-2 text-sm text-emerald-100/75">
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('products', { category: 'Groceries & Staples' })}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Groceries & Staples
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('products', { category: 'Fruits & Vegetables' })}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Fresh Harvest
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('products', { category: 'Dairy & Bakery' })}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                A2 Dairy & Bakery
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('products', { category: 'Kitchen & Home' })}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Kitchen & Home
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        {/* Store pages */}
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="font-heading text-xs font-semibold tracking-wider text-[#FDE68A]">
-            QUICK LINKS
-          </h4>
-          <ul className="space-y-2 text-sm text-emerald-100/75">
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('offers')}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Seasonal Offers
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('about')}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Our Harvest Story
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('contact')}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Contact Concierge
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => setRoute('account')}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Orders & GST Invoices
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        {/* Newsletter */}
-        <div className="md:col-span-4 space-y-3">
-          <h4 className="font-heading text-xs font-semibold tracking-wider text-[#FDE68A]">
-            MORNING HARVEST ALERTS
-          </h4>
-          <p className="text-xs text-emerald-100/70 leading-relaxed">
-            Receive weekly seasonal orchard arrivals and member-only voucher codes.
-          </p>
-          {subscribed ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-3 rounded-xl bg-emerald-900/50 border border-emerald-700/60 flex items-center gap-2 text-xs text-emerald-100"
-            >
-              <CheckCircle2 className="w-4 h-4 text-[#34D399]" />
-              <span>Subscribed for weekly harvest drops.</span>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubscribe} className="flex gap-2">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-emerald-950/80 border border-emerald-800/80 text-sm text-white placeholder:text-emerald-300/40 focus:outline-none focus:border-[#34D399]"
-              />
-              <motion.button
-                type="submit"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-4 py-2.5 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white font-heading font-semibold text-xs inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
-              >
-                <span>Join</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </motion.button>
-            </form>
-          )}
-        </div>
-      </div>
-
-      <div className="border-t border-emerald-950/90 py-5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-emerald-200/60">
-          <p>© 2026 RAVI SUPERMARKET · Anna Nagar Flagship, Chennai</p>
-          <p>100% Unique Verified SKUs · Daily 06:00 – 23:00</p>
+        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#CDB6C0]">
+          <span>© {new Date().getFullYear()} RAVI FANCY STORE. All rights reserved.</span>
+          <span>UPI · Google Pay · PhonePe · Razorpay · Cash on Delivery</span>
         </div>
       </div>
     </footer>
   );
-}
+};

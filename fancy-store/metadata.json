@@ -1,0 +1,8 @@
+{
+  "name": "RAVI FANCY STORE",
+  "description": "Curated boutique storefront for ladies' fancy accessories, bridal jewellery, hair ornaments, bindis, bangles, and cosmetics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

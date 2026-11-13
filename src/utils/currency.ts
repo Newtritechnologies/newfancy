@@ -1,40 +1,7 @@
+export const HERO_BANNER_IMG = '/store-images/fancy_hero_banner_1794550856206.jpg';
+export const PROMO_BRIDAL_IMG = '/store-images/fancy_promo_bridal_1794550857074.jpg';
+export const ABOUT_BOUTIQUE_IMG = '/store-images/fancy_boutique_about_1794550856286.jpg';
+
 export function formatINR(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(Math.round(amount));
-}
-
-export function formatShortDate(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
-
-export function formatDateTime(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
-
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+  return `₹${Math.round(amount).toLocaleString('en-IN')}`;
 }
