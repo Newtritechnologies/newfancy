@@ -1,0 +1,15 @@
+{
+  "leads": [
+    {
+      "id": "lead-1794554772387",
+      "referenceCode": "RGYM-2026-8670",
+      "fullName": "Vikram Rao",
+      "phone": "9840012345",
+      "email": "vikram@example.com",
+      "interest": "Free 3-Day Trial Pass",
+      "preferredSlot": "Morning (06:00 – 09:00)",
+      "goal": "Strength & Hypertrophy",
+      "createdAt": "2026-11-13T07:26:12.387Z"
+    }
+  ]
+}
